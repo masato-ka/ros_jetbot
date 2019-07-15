@@ -1,0 +1,17 @@
+<launch>
+    <arg name="cparam" default="$(find ros_jetbot)/ost.yaml"/>　<!--arguments to roslunch-->
+    <node name="camera" pkg="ros_jetbot" type="camera.py" />
+    <node name="camera_info" pkg="ros_jetbot" type="camera_info.py">
+        <param name="param" value="$(arg cparam)"/>
+    </node>
+    <node name="controll" pkg="ros_jetbot" type="controll.py"/>
+    <node name="image_proc" pkg="image_proc" type="image_proc" ns="jetbot"/>
+    <!--<node name="raw_image" pkg="image_view" type="image_view" output="screen">
+        <remap from="image" to="jetbot/image_raw" />
+        <param name="autosize" value="true"/>
+    </node>
+    <node name="rect_image" pkg="image_view" type="image_view" output="screen">
+        <remap from="image" to="jetbot/image_rect_color" />
+        <param name="autosize" value="true"/>
+    </node>-->
+</launch>
