@@ -1,0 +1,12 @@
+<launch>
+    <arg name="cparam" default="$(find ros_jetbot)/ost.yaml"/>　<!--arguments to roslunch-->
+    <arg name="'location" default="/tmp"/>
+    <node name="camera" pkg="ros_jetbot" type="camera.py" />
+    <node name="camera_info" pkg="ros_jetbot" type="camera_info.py">
+        <param name="param" value="$(arg cparam)"/>
+    </node>
+    <node name="controll" pkg="ros_jetbot" type="controll.py"/>
+    <node name="avoidance_collector" pkg="ros_jetbot" type="avoidance_collector.py" >
+        <para name="parents" value="$(arg location)"/>
+    </node>
+</launch>
