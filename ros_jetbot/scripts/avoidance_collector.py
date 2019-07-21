@@ -12,18 +12,19 @@ class AvoidanceCollector:
     image = None
     blocked_dir = 'dataset/blocked'
     free_dir = 'dataset/free'
+    _bridge = CvBridge()
 
     def __init__(self, parents_dir):
-        self._bridge = CvBridge()
-        if parents_dir != '':
-            blocked_dir = os.path.join(parents_dir, 'dataset/blocked')
-            free_dir = os.path.join(parents_dir, 'dataset/free')
         rospy.Subscriber('/joy', Joy, self.joy_stick_callback)
         rospy.Subscriber('/jetbot/image_raw', Image, self.image_callback)
+        rospy.init_node("avoidance_collector")
+        parents_dir = rospy.get_param('~save', '/tmp/dataset')
+        if parents_dir != '':
+            self.blocked_dir = os.path.join(parents_dir, 'blocked')
+            self.free_dir = os.path.join(parents_dir, 'free')
 
     def start(self):
         self._create_save_falder()
-        rospy.init_node("avoidance_collector")
         rospy.spin()
 
     def joy_stick_callback(self, msg):
@@ -57,6 +58,5 @@ class AvoidanceCollector:
 
 
 if __name__ == '__main__':
-    parents_dir = rospy.get_param('avoidance_collector/parents')
-    avoidance = AvoidanceCollector(parents_dir)
+    avoidance = AvoidanceCollector()
     avoidance.start()
