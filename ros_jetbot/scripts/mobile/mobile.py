@@ -40,11 +40,15 @@ class MobileController:
             radius = -1 * self.max_radius if radius == 0.0 else radius
             self.left_v = (-1*(radius+self.wheel_distance)*speed)/self.max_radius if radius != 0.0 else speed
             self.right_v = (-1*(radius-self.wheel_distance)*speed)/self.max_radius if radius != 0.0 else speed
+            self.left_v = self.left_v if speed > 0.0 else -0.5
+            self.right_v = self.right_v if speed > 0.0 else 0.5
         elif radius > 0.0:
             radius = self.max_radius * (1.0 - radius)
             radius = self.max_radius if radius == 0.0 else radius
             self.left_v = (radius+self.wheel_distance)*speed/self.max_radius if radius != 0.0 else speed
             self.right_v = (radius-self.wheel_distance)*speed/self.max_radius if radius != 0.0 else speed
+            self.left_v = self.left_v if speed > 0.0 else 0.5
+            self.right_v = self.right_v if speed > 0.0 else -0.5
         else:
             self.right_v = speed
             self.left_v = speed

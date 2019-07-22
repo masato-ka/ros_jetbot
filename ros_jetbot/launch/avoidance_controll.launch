@@ -1,0 +1,17 @@
+<launch>
+    <arg name="cparam" default="$(find ros_jetbot)/ost.yaml"/>　<!--arguments to roslunch-->
+    <arg name="'model" default="/tmp/best_model.pth"/>
+    <node name="camera" pkg="ros_jetbot" type="camera.py">
+        <param name="~width" value="224" />
+        <param name="~height" value="224" />
+    </node>
+    <node name="camera_info" pkg="ros_jetbot" type="camera_info.py">
+        <param name="param" value="$(arg cparam)"/>
+    </node>
+    <node name="controll" pkg="ros_jetbot" type="controll.py">
+        <remap from="/jetbot/cmd_vel" to="/jetbot/avoidance/cmd_vel"/>
+    </node>
+    <node name="avoidnace_controll" pkg="ros_jetbot" type="avoidance_controller.py" >
+            <param name="model" value="$(arg model)"/>
+    </node>
+</launch>

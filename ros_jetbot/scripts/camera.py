@@ -14,14 +14,17 @@ IMAGE_TOPIC = 'jetbot/image_raw'
 
 class JetbotCamera:
 
-    def __init__(self, width=640, height=480, calib_file=''):
+    bridge = CvBridge()
+
+    def __init__(self, calib_file=''):
+        self.publisher = rospy.Publisher(IMAGE_TOPIC, Image, queue_size=1)
+        rospy.init_node(NODE_NAME)
+        width = rospy.get_param('~width', 640)
+        height = rospy.get_param('~height', 480)
         self.calib_file = calib_file
         self.camera = Camera(width=width,height=height)
-        self.publisher = rospy.Publisher(IMAGE_TOPIC, Image, queue_size=1)
-        self.bridge = CvBridge()
 
     def start(self):
-        rospy.init_node(NODE_NAME)
         self.camera.observe(self.image_proc, names='value')
         self.camera.start()
         rospy.spin()
