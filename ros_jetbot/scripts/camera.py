@@ -21,6 +21,7 @@ class JetbotCamera:
         rospy.init_node(NODE_NAME)
         width = rospy.get_param('~width', 640)
         height = rospy.get_param('~height', 480)
+        rospy.logwarn(width)
         self.calib_file = calib_file
         self.camera = Camera(width=width,height=height)
 
