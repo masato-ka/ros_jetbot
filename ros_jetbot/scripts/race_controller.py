@@ -134,7 +134,7 @@ class RaceController:
         image = self._preprocess()
         xy = self.model(image).detach().float().cpu().numpy().flatten()
         slottle = self._input_disc(xy[0])
-        handle = self._input_disc(xy[1])
+        handle = xy[1]
         return slottle,handle
 
 
