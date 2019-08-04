@@ -36,7 +36,7 @@ class DrivRecorder():
             self.rate.sleep()
 
     def _save_snapshot(self, directory, slottle, handle):
-        file_name = str(slottle)+'-'+str(handle)+'-'+str(uuid1())+'.jpg'
+        file_name = str(slottle)+'_'+str(round(handle, 3))+'_'+str(uuid1())+'.jpg'
         image_path = os.path.join(directory, file_name)
         if self.image == None:
             rospy.logwarn('Can not get Image message yet.')
