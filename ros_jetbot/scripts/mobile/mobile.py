@@ -1,9 +1,7 @@
-import cv2
 import threading
 import time
 
 import numpy as np
-import rospy
 from jetbot import Robot
 
 
@@ -13,7 +11,8 @@ class MobileController:
     controll_thread = None
     left_v = 0.0
     right_v = 0.0
-    max_radius = 20.0
+    max_radius = 60.0
+    gradient = 30
 
     def __init__(self, wheel_distance, robot: Robot):
         self.wheel_distance = wheel_distance
@@ -36,19 +35,13 @@ class MobileController:
     def controll(self, speed, radius):
 
         if radius < 0.0:
-            radius = -1 * self.max_radius * (1.0 + radius)
-            radius = -1 * self.max_radius if radius == 0.0 else radius
-            self.left_v = (-1*(radius+self.wheel_distance)*speed)/self.max_radius if radius != 0.0 else speed
-            self.right_v = (-1*(radius-self.wheel_distance)*speed)/self.max_radius if radius != 0.0 else speed
-            self.left_v = self.left_v if speed > 0.0 else -0.5
-            self.right_v = self.right_v if speed > 0.0 else 0.5
+            radius = (self.gradient * radius) + (self.max_radius)
+            self.left_v = ((radius-self.wheel_distance)*speed)/(self.max_radius-self.wheel_distance)
+            self.right_v = ((radius+self.wheel_distance)*speed)/(self.max_radius+self.wheel_distance)
         elif radius > 0.0:
-            radius = self.max_radius * (1.0 - radius)
-            radius = self.max_radius if radius == 0.0 else radius
-            self.left_v = (radius+self.wheel_distance)*speed/self.max_radius if radius != 0.0 else speed
-            self.right_v = (radius-self.wheel_distance)*speed/self.max_radius if radius != 0.0 else speed
-            self.left_v = self.left_v if speed > 0.0 else 0.5
-            self.right_v = self.right_v if speed > 0.0 else -0.5
+            radius = (-1 * self.gradient * radius) + (self.max_radius)
+            self.left_v = (radius+self.wheel_distance)*speed/(self.max_radius+self.wheel_distance)
+            self.right_v = (radius-self.wheel_distance)*speed/(self.max_radius-self.wheel_distance)
         else:
             self.right_v = speed
             self.left_v = speed

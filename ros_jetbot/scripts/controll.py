@@ -44,7 +44,7 @@ class JetbotController:
 
     def joy_stick_callback(self, msg):
         slottle = self._input_disc(msg.axes[1])
-        handle = self._input_disc(msg.axes[2])
+        handle = msg.axes[2]
         #buttons.5,7
         rospy.loginfo("joystick event Slottle: {}, Argument: {}".format(slottle, handle))
         self.mobile.controll(slottle, -1.0*handle)

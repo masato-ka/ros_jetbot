@@ -63,7 +63,7 @@ class DrivRecorder():
             self.record_flg = False
 
         self.slottle = self._input_disc(msg.axes[1])
-        self.handle = -1.0 * self._input_disc(msg.axes[2])
+        self.handle = -1.0 * msg.axes[2]
         rospy.loginfo("joystick event Slottle: {}, Argument: {}".format(self.slottle, self.handle))
 
     def _input_disc(self, input):

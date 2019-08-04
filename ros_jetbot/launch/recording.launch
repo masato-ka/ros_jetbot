@@ -10,7 +10,7 @@
     <node name="controll" pkg="ros_jetbot" type="controll.py"/>
 
     <node name="record" pkg="ros_jetbot" type="record.py">
-        <param name="save" value="/home/jetbot/racedata"/>
+        <param name="save" value="/home/jetbot/racedata3"/>
     </node>
     <node name="image_proc" pkg="image_proc" type="image_proc" ns="jetbot"/>
     <!--<node name="raw_image" pkg="image_view" type="image_view" output="screen">

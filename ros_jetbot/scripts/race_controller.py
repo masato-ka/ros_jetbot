@@ -13,34 +13,84 @@ import rospy
 from cv_bridge import CvBridge
 
 
+# class Net(torch.nn.Module):
+#     def __init__(self):
+#         super(Net, self).__init__()
+#         self.conv1 = torch.nn.Conv2d(3, 24, kernel_size=3)
+#         self.conv2 = torch.nn.Conv2d(24, 32, kernel_size=3)
+#         self.conv3 = torch.nn.Conv2d(32, 64, kernel_size=3)
+#         self.conv4 = torch.nn.Conv2d(64, 64, kernel_size=3)
+#         self.conv5 = torch.nn.Conv2d(64, 64, kernel_size=3)
+#         #self.conv2_drop = torch.nn.Dropout2d()
+#         self.fc1 = torch.nn.Linear(2560, 1000)
+#         self.fc2 = torch.nn.Linear(1000, 100)
+#         self.fc3 = torch.nn.Linear(100, 100)
+#         self.fc4 = torch.nn.Linear(100, 2)
+#     def forward(self, x):
+#         x = F.relu(self.conv1(x), 2)
+#         x = F.relu(F.max_pool2d(self.conv2(x), 2))
+#         x = F.relu(F.max_pool2d(self.conv3(x), 2))
+#         x = F.relu(F.max_pool2d(self.conv4(x), 2))
+#         x = F.relu(F.max_pool2d(self.conv5(x), 2))
+#         #print(x.size())
+#         x = x.view(-1,2560)
+#         x = F.relu(self.fc1(x))
+#         #x = F.dropout(x, training=self.training)
+#         x = F.relu(self.fc2(x))
+#         x = F.dropout(x, training=self.training)
+#         x = F.relu(self.fc3(x))
+#         x = F.dropout(x, training=self.training)
+#         return self.fc4(x)
+
 class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
-        self.conv1 = torch.nn.Conv2d(3, 24, kernel_size=3)
-        self.conv2 = torch.nn.Conv2d(24, 32, kernel_size=3)
-        self.conv3 = torch.nn.Conv2d(32, 64, kernel_size=3)
-        self.conv4 = torch.nn.Conv2d(64, 64, kernel_size=3)
-        self.conv5 = torch.nn.Conv2d(64, 64, kernel_size=3)
-        #self.conv2_drop = torch.nn.Dropout2d()
-        self.fc1 = torch.nn.Linear(2560, 1000)
-        self.fc2 = torch.nn.Linear(1000, 100)
-        self.fc3 = torch.nn.Linear(100, 100)
-        self.fc4 = torch.nn.Linear(100, 2)
+        self.features = torch.nn.Sequential(
+            #conv1
+            #            torch.nn.Conv2d(3, 24,kernel_size=3),
+            torch.nn.Conv2d(3, 24,kernel_size=5),
+            torch.nn.ReLU(),
+            #conv2
+            #            torch.nn.Conv2d(24, 32,kernel_size=3),
+            torch.nn.Conv2d(24, 24,kernel_size=5),
+            torch.nn.ReLU(),
+            torch.nn.MaxPool2d(kernel_size=2),
+            #conv3
+            #            torch.nn.Conv2d(32, 32,kernel_size=3),
+            torch.nn.Conv2d(24, 32,kernel_size=5),
+            torch.nn.ReLU(),
+            torch.nn.MaxPool2d(kernel_size=2),
+            #conv3
+            #            torch.nn.Conv2d(32, 64,kernel_size=3),
+            torch.nn.Conv2d(32, 64,kernel_size=3),
+            torch.nn.ReLU(),
+            torch.nn.MaxPool2d(kernel_size=2),
+            #conv3
+            #            torch.nn.Conv2d(64, 64,kernel_size=3),
+            torch.nn.Conv2d(64, 64,kernel_size=3),
+
+            torch.nn.ReLU(),
+            torch.nn.MaxPool2d(kernel_size=2)
+        )
+        self.classifier = torch.nn.Sequential(
+            torch.nn.Linear(2240, 1000),
+            torch.nn.ReLU(),
+            torch.nn.Linear(1000, 100),
+            torch.nn.ReLU(),
+            torch.nn.Dropout(),
+            torch.nn.Linear(100, 100),
+            torch.nn.ReLU(),
+            torch.nn.Dropout(),
+            torch.nn.Linear(100, 2),
+            torch.nn.ReLU()
+
+        )
     def forward(self, x):
-        x = F.relu(self.conv1(x), 2)
-        x = F.relu(F.max_pool2d(self.conv2(x), 2))
-        x = F.relu(F.max_pool2d(self.conv3(x), 2))
-        x = F.relu(F.max_pool2d(self.conv4(x), 2))
-        x = F.relu(F.max_pool2d(self.conv5(x), 2))
-        #print(x.size())
-        x = x.view(-1,2560)
-        x = F.relu(self.fc1(x))
-        #x = F.dropout(x, training=self.training)
-        x = F.relu(self.fc2(x))
-        x = F.dropout(x, training=self.training)
-        x = F.relu(self.fc3(x))
-        x = F.dropout(x, training=self.training)
-        return self.fc4(x)
+        x = self.features(x)
+        #        print(x.size())
+        x = x.view(-1,2240)
+        x = self.classifier(x)
+        return x
 
 
 class RaceController:
